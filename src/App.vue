@@ -1,29 +1,99 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+  <div class="container">
+    <div class="columns">
+      <div class="column">
+        <div class="columns is-multiline">
+          <div
+            v-for="(beverage, index) in beverages"
+            :key="index"
+            class="column is-6"
+          >
+            <Product
+              :product="beverage"
+              :disabled="money < beverage.price"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="column">
+        <div class="columns">
+          <div
+            v-for="(coin, index) in coins"
+            :key="index"
+            class="column"
+          >
+            <Coin
+              :value="coin"
+              @click="money = money + $event"
+            />
+          </div>
+        </div>
+        <div class="columns">
+          Money : {{ money }}
+        </div>
+      </div>
+    </div>
+    <b-loading
+      :is-full-page="false"
+      :active.sync="loading"
+      :can-cancel="true"
+    />
+    <!-- <input-with-validate
+      v-model="keyword"
+      @enter="addList"
+    />
+    <todo-list
+      :lists="lists"
+      @remove="removeList"
+    /> -->
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import HelloWorld from './components/HelloWorld.vue';
+import { defineComponent, ref, onMounted } from '@vue/composition-api';
+import { InputWithValidate } from '@/components/inputs';
+import { TodoList } from '@/components/lists';
+import { Coin, Product } from '@/components/beverages';
+import useBeverageFetch from '@/services/useBeverageFetch';
 
-@Component({
+export default defineComponent({
   components: {
-    HelloWorld,
+    InputWithValidate,
+    TodoList,
+    Coin,
+    Product,
   },
-})
-export default class App extends Vue {}
-</script>
+  setup() {
+    // const keyword = ref<string>('');
+    // const lists = ref<Array<string>>([]);
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+    // const addList = () => {
+    //   if (keyword.value) {
+    //     lists.value = [...lists.value, keyword.value];
+    //     keyword.value = '';
+    //   }
+    // };
+
+    // const removeList = (idx: number) => {
+    //   lists.value.splice(idx, 1);
+    // };
+
+    // return {
+    //   keyword,
+    //   lists,
+    //   addList,
+    //   removeList,
+    // };
+    const coins = ref<Array<number>>([1, 2, 5, 10]);
+    const money = ref<number>(0);
+    const { beverages, fetchAllBeverages, loading } = useBeverageFetch();
+    fetchAllBeverages();
+    return {
+      beverages,
+      loading,
+      coins,
+      money,
+    };
+  },
+});
+</script>
