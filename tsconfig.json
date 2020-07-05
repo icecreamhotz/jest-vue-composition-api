@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
+    "module": "commonjs",
+    "target": "es2018",
     "strict": true,
     "jsx": "preserve",
     "importHelpers": true,
@@ -11,15 +11,16 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "types": [
-      "webpack-env"
-    ],
+    // "types": [
+    //   "webpack-env"
+    // ],
     "paths": {
       "@/*": [
         "src/*"
       ]
     },
     "lib": [
+      "es2018",
       "esnext",
       "dom",
       "dom.iterable",
@@ -31,7 +32,7 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "tests/**/*.ts",
-    "tests/**/*.tsx"
+    "tests/**/*.tsx", "tests/vueSetup.js"
   ],
   "exclude": [
     "node_modules"

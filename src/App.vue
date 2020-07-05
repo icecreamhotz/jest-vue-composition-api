@@ -11,6 +11,7 @@
             <Product
               :product="beverage"
               :disabled="money < beverage.price"
+              @buy="onClickBuy"
             />
           </div>
         </div>
@@ -31,6 +32,12 @@
         <div class="columns">
           Money : {{ money }}
         </div>
+        <div class="columns">
+          Change: 10 ({{ change.changeTenCoin }}),
+          5 ({{ change.changeFiveCoin }}),
+          2({{ change.changeTwoCoin }}),
+          1({{ change.changeOneCoin }})
+        </div>
       </div>
     </div>
     <b-loading
@@ -50,7 +57,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from '@vue/composition-api';
+import { defineComponent, ref, reactive } from '@vue/composition-api';
 import { InputWithValidate } from '@/components/inputs';
 import { TodoList } from '@/components/lists';
 import { Coin, Product } from '@/components/beverages';
@@ -84,15 +91,43 @@ export default defineComponent({
     //   addList,
     //   removeList,
     // };
+    interface Ba {
+      changeTenCoin: number;
+      changeFiveCoin: number;
+      changeTwoCoin: number;
+      changeOneCoin: number;
+    }
     const coins = ref<Array<number>>([1, 2, 5, 10]);
     const money = ref<number>(0);
+    const change = reactive<Ba>({
+      changeTenCoin: 0,
+      changeFiveCoin: 0,
+      changeTwoCoin: 0,
+      changeOneCoin: 0,
+    });
+
+    const onClickBuy = (price: number) => {
+      let total = money.value - price;
+      money.value = total;
+      change.changeTenCoin = Math.floor(total / 10);
+      total %= 10;
+      change.changeFiveCoin = Math.floor(total / 5);
+      total %= 5;
+      change.changeTwoCoin = Math.floor(total / 2);
+      total %= 2;
+      change.changeOneCoin = Math.floor(total);
+    };
+
     const { beverages, fetchAllBeverages, loading } = useBeverageFetch();
     fetchAllBeverages();
+
     return {
       beverages,
       loading,
       coins,
       money,
+      change,
+      onClickBuy,
     };
   },
 });

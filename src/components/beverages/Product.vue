@@ -8,6 +8,7 @@
       <b-button
         type="is-info"
         :disabled="disabled"
+        @click="$emit('buy', product.price)"
       >
         Buy
       </b-button>
